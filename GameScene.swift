@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import FirebaseDatabase
+import CoreMotion
 
 class GameScene: ViewController {
     
@@ -18,13 +20,31 @@ class GameScene: ViewController {
     @IBOutlet weak var hitScheme: UIView!
     
     var LabelText = String()
-    
+    var motionManager: CMMotionManager!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates()
+
         typeOfPassLabel.text = "Excellent!"
-        hitScheme.backgroundColor = .red 
+        hitScheme.backgroundColor = .magenta
         PassName.text = LabelText
+        
+//        motionManager = CMMotionManager()
+//        motionManager.startAccelerometerUpdates()
+        
+//        while true{
+//        recordChange()
+//        }
     }
+    
+    func recordChange(){
+        if motionManager.accelerometerData != nil {
+        var accelX: Double = (motionManager.accelerometerData?.acceleration.x)!
+            print(accelX)
+        }
+    }
+    
 }

@@ -7,14 +7,23 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var player2Name: UITextField!
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        view.addGestureRecognizer(tap)
+
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     override func didReceiveMemoryWarning() {
@@ -24,8 +33,8 @@ class ViewController: UIViewController {
     
     //Prepares and data that will be passed into the next view controller
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        var destView: GameScene = segue.destination as! GameScene
-        destView.LabelText = player2Name.text!
+        let destView: GameScene = segue.destination as! GameScene
+        destView.LabelText = "VS: " + player2Name.text!
     }
 
 
