@@ -32,19 +32,21 @@ class GameScene: ViewController {
         hitScheme.backgroundColor = .magenta
         PassName.text = LabelText
         
-//        motionManager = CMMotionManager()
-//        motionManager.startAccelerometerUpdates()
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates()
         
-//        while true{
-//        recordChange()
-//        }
+        self.recordChange()
     }
     
     func recordChange(){
-        if motionManager.accelerometerData != nil {
-        var accelX: Double = (motionManager.accelerometerData?.acceleration.x)!
-            print(accelX)
+
+        DispatchQueue.global(qos: .background).async {
+            while true {
+                if self.motionManager.accelerometerData != nil {
+                    var accelX: Double = (self.motionManager.accelerometerData?.acceleration.x)!
+                    print(accelX)
+                }
+            }
         }
     }
-    
 }
