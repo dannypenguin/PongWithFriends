@@ -21,7 +21,7 @@ class GameScene: ViewController {
     @IBOutlet weak var hitScheme: UIView!
     
     var LabelText = String()
-    var motionManager: CMMotionManager!
+    lazy var motionManager = CMMotionManager()
     var lastupdated: NSDate = NSDate(timeIntervalSinceReferenceDate: 0)
     var lastX: Float = 0
     var lastY: Float = 0
@@ -30,26 +30,37 @@ class GameScene: ViewController {
     var grabFlag: Bool = true
     var hasSwung: Bool = false
     let shakeThreshold: Float = 2
+    var recurseFlag: Bool = true
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        motionManager = CMMotionManager()
-        motionManager.startAccelerometerUpdates()
-
-        typeOfPassLabel.text = "Excellent!"
-        hitScheme.backgroundColor = .magenta
+        
+        //motionManager.startAccelerometerUpdates()
+        recordChange()
+        
+        typeOfPassLabel.text = "Welcome!"
+        hitScheme.backgroundColor = .green
         PassName.text = LabelText
+
+
         
-        motionManager = CMMotionManager()
-        motionManager.startAccelerometerUpdates()
-        
-        self.recordChange()
     }
+    
+
     func thresholdCipher(value: Float) {
-        if value <= 7 {
-            self.typeOfPassLabel.text = ""
+        if value >= 13 {
+            self.typeOfPassLabel.text = "Excellent!"
+            self.hitScheme.backgroundColor = .magenta
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+        } else if value > 9 && value <= 12 {
+            self.typeOfPassLabel.text = "Wow!"
+            self.hitScheme.backgroundColor = .red
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+        } else {
+            self.typeOfPassLabel.text = "Nice!"
+            self.hitScheme.backgroundColor = .blue
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
     }
     
@@ -58,6 +69,7 @@ class GameScene: ViewController {
             while self.grabFlag == true {
                 let start: NSDate = NSDate()
                 var cont = start.timeIntervalSince(self.lastupdated as Date)
+                self.motionManager.startAccelerometerUpdates()
                 if self.motionManager.accelerometerData != nil {
                     var accelX: Float = Float((self.motionManager.accelerometerData?.acceleration.x)!)
                     var accelY: Float = Float((self.motionManager.accelerometerData?.acceleration.y)!)
@@ -71,21 +83,19 @@ class GameScene: ViewController {
                         self.lastZ = accelZ
                         self.changeinVar = velocity
                         
-                        if accel != 0 {
+                        if accel != 0 && accel > 7 {
                             DispatchQueue.main.async {
-                                self.typeOfPassLabel.text = String(accel)
+                                self.thresholdCipher(value: accel)
+                                //self.grabFlag = false
+                                self.motionManager.stopAccelerometerUpdates()
                             }
-                            if accel > 9 {
-                                self.hasSwung = true
-                                self.grabFlag = false
-//                                print(self.hasSwung)
-                            }
-                        
                         }
-                        
                     }
                 }
+                
             }
+            //self.motionManager.stopAccelerometerUpdates()
+            print("Reached")
         }
     }
 }
